@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        button {
+            background-color: #4caf50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 4px;
+            background-color: #e8f5e8;
+            border: 1px solid #4caf50;
+        }
+        .error {
+            background-color: #ffebee;
+            border: 1px solid #f44336;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 Game Club API Test</h1>
+        <p>This page tests the API connection directly without React.</p>
+        
+        <button onclick="testGamesAPI()">Test Games API</button>
+        <button onclick="testMembersAPI()">Test Members API</button>
+        <button onclick="testBoth()">Test Both APIs</button>
+        
+        <div id="result"></div>
+    </div>
+
+    <script>
+        async function testGamesAPI() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '<p>Testing Games API...</p>';
+            
+            try {
+                const response = await fetch('http://localhost:8080/admin/games');
+                const data = await response.json();
+                
+                resultDiv.innerHTML = `
+                    <div class="result">
+                        <h3>✅ Games API Working!</h3>
+                        <p><strong>Status:</strong> ${response.status}</p>
+                        <p><strong>Data:</strong></p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    </div>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <h3>❌ Games API Failed</h3>
+                        <p><strong>Error:</strong> ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function testMembersAPI() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '<p>Testing Members API...</p>';
+            
+            try {
+                const response = await fetch('http://localhost:8080/members');
+                const data = await response.json();
+                
+                resultDiv.innerHTML = `
+                    <div class="result">
+                        <h3>✅ Members API Working!</h3>
+                        <p><strong>Status:</strong> ${response.status}</p>
+                        <p><strong>Data:</strong></p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    </div>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <h3>❌ Members API Failed</h3>
+                        <p><strong>Error:</strong> ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function testBoth() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '<p>Testing both APIs...</p>';
+            
+            try {
+                const [gamesResponse, membersResponse] = await Promise.all([
+                    fetch('http://localhost:8080/admin/games'),
+                    fetch('http://localhost:8080/members')
+                ]);
+                
+                const gamesData = await gamesResponse.json();
+                const membersData = await membersResponse.json();
+                
+                resultDiv.innerHTML = `
+                    <div class="result">
+                        <h3>✅ Both APIs Working!</h3>
+                        <p><strong>Games Status:</strong> ${gamesResponse.status}</p>
+                        <p><strong>Members Status:</strong> ${membersResponse.status}</p>
+                        <p><strong>Games Data:</strong></p>
+                        <pre>${JSON.stringify(gamesData, null, 2)}</pre>
+                        <p><strong>Members Data:</strong></p>
+                        <pre>${JSON.stringify(membersData, null, 2)}</pre>
+                    </div>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <h3>❌ API Test Failed</h3>
+                        <p><strong>Error:</strong> ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>
